@@ -6,11 +6,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
+    "outDir": "",
     "baseUrl": ".",
     "paths":{
       "*":["node_modules/*"]
     }
   },
-  "include":["src/**/*"]
 }
