@@ -7,7 +7,6 @@ export const CreateVandor = async (req: Request, res: Response, next: NextFuncti
 
     const {name, address, pincode, foodType, email, password,ownerName, phone} = <CreateVandorInput>req.body;
 
-
     const existingVandor = await Vandor.findOne({email: email})
 
     if (existingVandor !== null){
@@ -19,8 +18,6 @@ export const CreateVandor = async (req: Request, res: Response, next: NextFuncti
     const salt = await GenerateSalt()
     const userPassword = await GeneratePassword(password, salt)
     //encrypt the password using the salt
-
-
     const createdVandor = await Vandor.create({
         name: name,
         address: address,
@@ -36,17 +33,24 @@ export const CreateVandor = async (req: Request, res: Response, next: NextFuncti
         coverImages:[],
 
     })
-
     return res.json(createdVandor)
 }
-
-
 export const GetVandors = async (req: Request, res: Response, next: NextFunction) => {
+    const vandors = await Vandor.find()
 
-    
+    if(vandors !== null){
+        return res.json(vandors)
+    }
+    return res.json({"massage":"vandors data not available"})
 }
 
 export const GetVandorByID = async (req: Request, res: Response, next: NextFunction) => {
+    const vandorId = req.params.id;
 
-    
+    const vandors = await Vandor.findById(vandorId)
+
+    if(vandors !== null){
+        return res.json(vandors)
+    }
+    return res.json({"massage":"vandors data not available"})
 }
