@@ -3,11 +3,20 @@ import { CreateVandorInput } from '../dto';
 import { Vandor } from '../models';
 import { GenerateSalt, GeneratePassword } from '../utility'
 
+export const FindVandor = async(id:string | undefined, email?: string)=>{
+    if(email){
+        return await Vandor.findOne({email: email})
+    }
+    else{
+        return await Vandor.findById(id)
+    }
+}
+
 export const CreateVandor = async (req: Request, res: Response, next: NextFunction) => {
 
     const {name, address, pincode, foodType, email, password,ownerName, phone} = <CreateVandorInput>req.body;
 
-    const existingVandor = await Vandor.findOne({email: email})
+    const existingVandor = await FindVandor('',email);
 
     if (existingVandor !== null){
         return res.json({"massage": "A Vandor is exist with this email ID"})
@@ -47,7 +56,7 @@ export const GetVandors = async (req: Request, res: Response, next: NextFunction
 export const GetVandorByID = async (req: Request, res: Response, next: NextFunction) => {
     const vandorId = req.params.id;
 
-    const vandors = await Vandor.findById(vandorId)
+    const vandors = await FindVandor(vandorId);
 
     if(vandors !== null){
         return res.json(vandors)
