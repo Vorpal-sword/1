@@ -60,6 +60,23 @@ export const UpdateVandorProfile = async (req: Request, res: Response, next: Nex
         return res.json({"massage":"Vandor information not updated"})
     }
 }
+export const UpdateVandorCoverImages = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if(user){
+        
+        const vandor = await FindVandor(user._id);
+
+        if (vandor !== null){
+            const files = req.files as [Express.Multer.File]
+            const images = files.map((file: Express.Multer.File) => file.filename);
+            vandor.coverImages.push(...images);
+            const result = await vandor.save();
+            return res.json(result);
+        }
+    }
+    return res.json({"massage":"Something went wrong with AddFood"})
+
+}
 export const UpdateVandorService = async (req: Request, res: Response, next: NextFunction) => {
 
     const { foodTypes, name, address, phone } = <EditVandorInputs>req.body;
@@ -86,13 +103,17 @@ export const AddFood = async (req: Request, res: Response, next: NextFunction) =
         const vandor = await FindVandor(user._id);
 
         if (vandor !== null){
+            const files = req.files as [Express.Multer.File]
+
+            const images = files.map((file: Express.Multer.File) => file.filename);
+
             const createdFood = await Food.create({
                 vandorId: vandor._id,
                 name: name,
                 description: description,
                 category: category,
                 foodType: foodType,
-                images: ['burger.jpg'],
+                images: images,
                 readyTime: readyTime,
                 price: price,
                 rating: 0
