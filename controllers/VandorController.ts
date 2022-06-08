@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { FindVandor } from './AdminController';
-import { EditVandorInputs, VandorLoginInputs } from '../dto';
+import { EditVandorInputs, VandorLoginInputs, CreateFoodInputs } from '../dto';
 import { ValidatePassword, GenerateSignature } from '../utility';
+import { Food } from '../models';
 
 export const VandorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = <VandorLoginInputs>req.body;
@@ -75,4 +76,44 @@ export const UpdateVandorService = async (req: Request, res: Response, next: Nex
         return res.json({"massage":"Service information not updated"})
     }
 
+}
+
+export const AddFood = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if(user){
+        const { name, description, category, foodType, readyTime, price } = <CreateFoodInputs>req.body;
+        
+        const vandor = await FindVandor(user._id);
+
+        if (vandor !== null){
+            const createdFood = await Food.create({
+                vandorId: vandor._id,
+                name: name,
+                description: description,
+                category: category,
+                foodType: foodType,
+                images: ['burger.jpg'],
+                readyTime: readyTime,
+                price: price,
+                rating: 0
+            })
+
+            vandor.foods.push(createdFood);
+            const result = await vandor.save();
+
+            return res.json(result);
+        }
+    }
+    return res.json({"massage":"Something went wrong with AddFood"})
+}
+
+export const GetFoods = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if(user){
+        const foods = await Food.find({vandorId: user._id})
+        if (foods !== null){
+            return res.json(foods);
+        }
+    }
+    return res.json({"massage":"Something went wrong with GetFoods"})
 }
