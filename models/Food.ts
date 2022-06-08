@@ -9,6 +9,8 @@ interface FoodDoc extends Document{
     readyTime: number;
     price: number;
     rating: number;
+    count: number;
+    isFavourite: boolean;
     images: [string];
 }
 
@@ -21,6 +23,8 @@ const FoodSchema = new Schema({
     readyTime:{type: Number},
     price:{type: Number, required: true},
     rating:{type: Number},
+    count:{type: Number},
+    isFavourite: {type: Boolean},
     images: {type: [String]}
 },{
     toJSON:{
