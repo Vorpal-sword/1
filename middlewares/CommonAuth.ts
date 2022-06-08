@@ -1,3 +1,5 @@
+import {Request, Response, NextFunction } from 'express';
+import {ValidateSignature} from '../utility/PasswordUtility';
 import {AuthPayload} from '../dto/Auth.dto';
 
 declare global{
@@ -5,5 +7,15 @@ declare global{
         interface Request{
             user?: AuthPayload
         }
+    }
+}
+
+export const Authenticate = async (req:Request, res: Response, next: NextFunction) => {
+    const validate = await ValidateSignature(req);
+    if (validate){
+        next()
+    }
+    else {
+        return res.json({"massage":"user not Authorized"})
     }
 }
