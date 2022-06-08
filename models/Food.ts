@@ -33,7 +33,6 @@ const FoodSchema = new Schema({
             delete ret.createdAt,
             delete ret.updatedAt
         }
-
     },
     timestamps: true
 })

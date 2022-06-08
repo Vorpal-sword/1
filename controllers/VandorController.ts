@@ -98,15 +98,13 @@ export const UpdateVandorService = async (req: Request, res: Response, next: Nex
 export const AddFood = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if(user){
-        const { name, description, category, foodType, readyTime, price } = <CreateFoodInputs>req.body;
+        const { name, description, category, foodType, readyTime, price, count, isFavourite} = <CreateFoodInputs>req.body;
         
         const vandor = await FindVandor(user._id);
 
         if (vandor !== null){
             const files = req.files as [Express.Multer.File]
-
             const images = files.map((file: Express.Multer.File) => file.filename);
-
             const createdFood = await Food.create({
                 vandorId: vandor._id,
                 name: name,
@@ -115,8 +113,10 @@ export const AddFood = async (req: Request, res: Response, next: NextFunction) =
                 foodType: foodType,
                 images: images,
                 readyTime: readyTime,
-                price: price,
-                rating: 0
+                price: price * count,
+                rating: 0,
+                count: count,
+                isFavourite: isFavourite
             })
 
             vandor.foods.push(createdFood);
@@ -138,3 +138,4 @@ export const GetFoods = async (req: Request, res: Response, next: NextFunction) 
     }
     return res.json({"massage":"Something went wrong with GetFoods"})
 }
+

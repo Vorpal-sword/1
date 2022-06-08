@@ -5,4 +5,6 @@ export interface CreateFoodInputs{
     foodType: string;
     readyTime: number;
     price: number;
+    count: number;
+    isFavourite: boolean;
 }
